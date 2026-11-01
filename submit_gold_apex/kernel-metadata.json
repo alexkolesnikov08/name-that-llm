@@ -1,0 +1,55 @@
+{
+  "id": "morginalium/ntl-gold-apex-fork",
+  "title": "NTL Gold Apex fork",
+  "code_file": "name-that-llm-gold-apex-fork.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [
+    "gpu"
+  ],
+  "dataset_sources": [
+    "dhruvtibarewal/nlm-l24-adapters",
+    "seyitkaangunes/ntl-extra-api-passages",
+    "abdullah1afify/ntl-generations",
+    "dophuchung/ntl-proxy-generations",
+    "zbigniewkirchner/ntl-qwen3-8b-lora-claude-head",
+    "dhruvtibarewal/nlm-matched-clean",
+    "dhruvtibarewal/nlm-offline-wheels",
+    "josephadamski91/ntl-atlas-qwen3-8b-v1",
+    "lucasboesen/ntl-free-proxy-generations",
+    "nishantdahal/ntl-two-stage-lora",
+    "nishantdahal/ntl-handwriting-blend",
+    "dhruvtibarewal/nlm-l24-adapters-v5",
+    "prvsiyan/prvsiyans-extended-name-that-llm-dataset",
+    "pjmathematician/ultrabert-380m-ntl"
+  ],
+  "kernel_sources": [
+    "lucasboesen/name-that-llm-glm4-9b-trunc25",
+    "lucasboesen/name-that-llm-extract-encoders2",
+    "lucasboesen/name-that-llm-electra-large-weights",
+    "lucasboesen/name-that-llm-desklib-weights",
+    "lucasboesen/name-that-llm-train-lora24-s7",
+    "lucasboesen/name-that-llm-train-tokattn",
+    "lucasboesen/name-that-llm-train-tokattn2",
+    "vnton37nguyn/ntl-train-lora-qwen25-instyle"
+  ],
+  "competition_sources": [
+    "name-that-llm"
+  ],
+  "model_sources": [
+    "alexchilton/llama-3-1-8b-base/Transformers/default/1",
+    "qwen-lm/qwen-3/Transformers/4b-base/1",
+    "qwen-lm/qwen-3/Transformers/14b-base/1",
+    "qwen-lm/qwen-3/Transformers/14b/1",
+    "qwen-lm/qwen-3/Transformers/8b/1",
+    "qwen-lm/qwen-3/Transformers/8b-base/1",
+    "qwen-lm/qwen2.5/Transformers/7b/1",
+    "qwen-lm/qwen2.5/Transformers/14b/1"
+  ],
+  "docker_image": "gcr.io/kaggle-private-byod/python@sha256:9a6bcfda6d03b2cd9aa347ee8c1bae62043328ed0f4afe9bda014e4f8bbf9435",
+  "machine_shape": "NvidiaTeslaT4"
+}

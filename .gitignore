@@ -12,3 +12,6 @@ kaggle_model/
 *.joblib
 *.cbm
 *.db
+
+# сторонние публичные ноутбуки (рекона, не наше)
+research/
