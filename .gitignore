@@ -7,6 +7,7 @@ runs/
 data/
 artifacts/
 models/
+kaggle_model/
 *.pkl
 *.joblib
 *.cbm
