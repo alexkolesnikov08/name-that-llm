@@ -11,7 +11,7 @@ from ntl.cv import oof_predict
 from ntl.metrics import ba, bootstrap_ba
 
 ROOT = Path(__file__).resolve().parents[2]
-SPLIT_PATH = ROOT / "splits" / "v1.json"
+SPLIT_PATH = ROOT / "splits" / "v2.json"
 
 
 def load_split(path: Path = SPLIT_PATH) -> dict:

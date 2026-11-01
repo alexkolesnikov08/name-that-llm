@@ -24,6 +24,7 @@ from ntl.evaluate import evaluate_config, load_split
 ROOT = Path(__file__).resolve().parents[1]
 STORAGE = f"sqlite:///{ROOT / 'runs' / 'optuna.db'}"
 SEARCH_SEEDS = [42, 43]
+NGRAM = {"2-4": (2, 4), "2-5": (2, 5), "3-5": (3, 5), "3-6": (3, 6)}
 
 
 def main() -> None:
@@ -40,11 +41,10 @@ def main() -> None:
 
     def objective(trial: optuna.Trial) -> float:
         view = trial.suggest_categorical("view", ["char_wb", "char", "word", "char+word"])
+        ng_label = trial.suggest_categorical("ngram_range", list(NGRAM))
         cfg = {
             "view": view,
-            "ngram_range": trial.suggest_categorical(
-                "ngram_range", [(2, 4), (2, 5), (3, 5), (3, 6)]
-            ),
+            "ngram_range": NGRAM[ng_label],
             "min_df": trial.suggest_int("min_df", 1, 3),
             "sublinear_tf": trial.suggest_categorical("sublinear_tf", [True, False]),
             "max_features": trial.suggest_categorical(

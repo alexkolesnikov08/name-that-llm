@@ -24,7 +24,7 @@ from sklearn.preprocessing import StandardScaler
 from ntl.data import load_train
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "splits" / "v1.json"
+OUT = ROOT / "splits" / "v2.json"
 
 HOLDOUT_SIZE = 30
 DEV_FOLDS = 5
@@ -120,42 +120,48 @@ def refine_holdout(
     return sorted(H), sorted(D)
 
 
+def random_folds(prompts: list[str], n_splits: int, seed: int) -> list[list[str]]:
+    """Случайные фолды равного размера.
+
+    Нужны именно случайные, а не сбалансированные: иначе разные сиды дают
+    один и тот же сплит и «повторы» перестают быть повторами.
+    """
+    rng = np.random.default_rng(seed)
+    order = rng.permutation(len(prompts))
+    folds: list[list[str]] = [[] for _ in range(n_splits)]
+    for i, idx in enumerate(order):
+        folds[i % n_splits].append(prompts[idx])
+    return [sorted(f) for f in folds]
+
+
 def main() -> None:
     df = load_train()
     X_raw, names, joined = prompt_features(df)
     X = StandardScaler().fit_transform(X_raw)
     prompts = np.array(sorted(df["prompt_id"].unique()))
 
-    # 5 сбалансированных корзин по 30; лучшая по SMD уходит в holdout
-    buckets = greedy_balance(X, 5, seed=7)
-    options = []
-    for k, bucket in enumerate(buckets):
-        dev = sorted(set(range(len(prompts))) - set(bucket))
-        options.append((np.abs(smd(X, bucket, dev)).max(), k))
-    _, holdout_bucket = min(options)
-    holdout_idx, dev_idx = refine_holdout(X, buckets[holdout_bucket], sorted(
-        set(range(len(prompts))) - set(buckets[holdout_bucket])
-    ))
-
-    holdout_prompts = sorted(prompts[holdout_idx].tolist())
-    dev_prompts = sorted(prompts[dev_idx].tolist())
+    # holdout берём из v1, чтобы locked-множество не менялось
+    prev = json.loads((ROOT / "splits" / "v1.json").read_text())
+    holdout_prompts = prev["holdout_prompts"]
+    dev_prompts = prev["dev_prompts"]
+    holdout_idx = np.array([int(np.flatnonzero(prompts == p)[0]) for p in holdout_prompts])
+    dev_idx = np.array([int(np.flatnonzero(prompts == p)[0]) for p in dev_prompts])
 
     repeats = []
     for seed in REPEAT_SEEDS:
-        folds = greedy_balance(X[dev_idx], DEV_FOLDS, seed=seed)
-        repeats.append(
-            {"seed": seed, "folds": [sorted(prompts[dev_idx][f].tolist()) for f in folds]}
-        )
+        folds = random_folds(dev_prompts, DEV_FOLDS, seed=seed)
+        repeats.append({"seed": seed, "folds": folds})
 
     data_bytes = (ROOT / "train.csv").read_bytes()
     payload = {
-        "version": 1,
+        "version": 2,
         "dataset_sha256": hashlib.sha256(data_bytes).hexdigest(),
         "n_prompts": len(prompts),
         "holdout_prompts": holdout_prompts,
         "dev_prompts": dev_prompts,
         "repeat_seeds": REPEAT_SEEDS,
         "repeats": repeats,
+        "note": "v1 had identical pseudo-repeats; v2 uses random folds",
     }
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2))
@@ -169,6 +175,10 @@ def main() -> None:
     for r in repeats:
         sizes = [len(f) for f in r["folds"]]
         print(f"seed={r['seed']} fold sizes={sizes}")
+    base = [set(f) for f in repeats[0]["folds"]]
+    for r in repeats[1:]:
+        same = all(a == b for a, b in zip(base, [set(f) for f in r["folds"]]))
+        print(f"seed={r['seed']} identical to seed {repeats[0]['seed']}: {same}")
 
     # near-duplicate промптов: максимум косинуса между prompt-level документами
     from sklearn.metrics.pairwise import cosine_similarity
