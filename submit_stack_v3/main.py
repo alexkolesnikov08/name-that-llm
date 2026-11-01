@@ -16,7 +16,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import torch
-from sklearn.cluster import KMeans
 from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS, TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -30,7 +29,8 @@ DATA_CANDIDATES = [
 ]
 MODEL_CANDIDATES = [
     "/kaggle/input/datasets/eric0045/microsoft-deberta-v3-small-local/microsoft-deberta-v3-small",
-    "/kaggle/input/datasets/morginalium/deberta-v3-small-ntl",
+    "/kaggle/input/datasets/eric0045/microsoft-deberta-v3-small-local",
+    "/kaggle/input/microsoft-deberta-v3-small-local/microsoft-deberta-v3-small",
     os.environ.get("NTL_MODEL_DIR", ""),
     "microsoft/deberta-v3-small",
 ]
@@ -154,10 +154,13 @@ def pick_device() -> str:
 
 @torch.no_grad()
 def embed(texts, tokenizer, model, device, batch_size: int = 32, max_length: int = 384) -> np.ndarray:
+    texts = list(texts)
+    order = np.argsort([len(t.split()) for t in texts], kind="stable")
     chunks = []
-    for start in range(0, len(texts), batch_size):
+    for start in range(0, len(order), batch_size):
+        idx = order[start : start + batch_size]
         batch = tokenizer(
-            texts[start : start + batch_size],
+            [texts[i] for i in idx],
             padding=True,
             truncation=True,
             max_length=max_length,
@@ -167,24 +170,28 @@ def embed(texts, tokenizer, model, device, batch_size: int = 32, max_length: int
         mask = batch["attention_mask"].unsqueeze(-1).to(hidden.dtype)
         pooled = (hidden * mask).sum(1) / mask.sum(1).clamp(min=1e-6)
         chunks.append(pooled.cpu().numpy().astype(np.float32))
-    return np.vstack(chunks)
+    out = np.vstack(chunks)
+    result = np.empty_like(out)
+    result[order] = out
+    return result
 
 
-def cluster_labels(texts, k: int, seed: int = 0) -> np.ndarray:
-    """Группы промптов по содержанию: TF-IDF → SVD → KMeans."""
+def knn_center(X_emb: np.ndarray, texts, k: int = 17) -> np.ndarray:
+    """Вычитаем среднее k ближайших соседей в TF-IDF-пространстве.
+
+    Не требует знать число промптов на тесте, в отличие от KMeans.
+    """
     tfidf = TfidfVectorizer(ngram_range=(1, 2), min_df=2, sublinear_tf=True)
-    M = tfidf.fit_transform(texts)
-    Z = TruncatedSVD(n_components=min(100, M.shape[1] - 1), random_state=seed).fit_transform(M)
-    Z = normalize(Z)
-    return KMeans(n_clusters=k, n_init=10, random_state=seed).fit_predict(Z)
-
-
-def center_by_labels(X: np.ndarray, labels: np.ndarray) -> np.ndarray:
-    out = X.copy()
-    for g in np.unique(labels):
-        m = labels == g
-        out[m] -= out[m].mean(axis=0, keepdims=True)
-    return out
+    M = tfidf.fit_transform(list(texts))
+    n_comp = max(1, min(100, M.shape[0] - 1, M.shape[1] - 1))
+    Z = normalize(TruncatedSVD(n_components=n_comp, random_state=0).fit_transform(M))
+    if len(Z) < 2:
+        return X_emb - X_emb.mean(axis=0, keepdims=True)
+    sim = Z @ Z.T
+    np.fill_diagonal(sim, -np.inf)
+    k = min(k, len(Z) - 1)
+    idx = np.argpartition(-sim, k, axis=1)[:, :k]
+    return X_emb - X_emb[idx].mean(axis=1)
 
 
 def group_folds(groups, n_splits: int = 5, seed: int = 0):
@@ -219,27 +226,22 @@ def main() -> None:
     groups = train["prompt_id"].to_numpy(dtype=object)
     classes = sorted(train["model"].unique())
 
-    tr_texts = np.asarray(train["text"].tolist(), dtype=object)
-    te_texts = np.asarray(test["text"].tolist(), dtype=object)
+    tr_texts = np.asarray(train["text"].fillna("").astype(str).tolist(), dtype=object)
+    te_texts = np.asarray(test["text"].fillna("").astype(str).tolist(), dtype=object)
     print(f"train={len(tr_texts)} test={len(te_texts)} emb_device={pick_device()}", flush=True)
 
     device = pick_device()
     print("model candidates:", [(x, os.path.isdir(x)) for x in MODEL_CANDIDATES], flush=True)
-    tokenizer = AutoTokenizer.from_pretrained(model_dir())
-    encoder = AutoModel.from_pretrained(model_dir()).to(device).eval()
+    tokenizer = AutoTokenizer.from_pretrained(model_dir(), local_files_only=True)
+    encoder = AutoModel.from_pretrained(model_dir(), local_files_only=True).to(device).eval()
     tr_emb = embed(tr_texts.tolist(), tokenizer, encoder, device)
     te_emb = embed(te_texts.tolist(), tokenizer, encoder, device)
     print("embeddings ready", flush=True)
 
-    k_tr = int(train["prompt_id"].nunique())
-    k_te = max(1, round(len(te_texts) / 18))
-    tr_labels = cluster_labels(tr_texts.tolist(), k_tr)
-    te_labels = cluster_labels(te_texts.tolist(), k_te)
-    tr_emb = center_by_labels(tr_emb, tr_labels)
-    te_emb = center_by_labels(te_emb, te_labels)
+    tr_emb = knn_center(tr_emb, tr_texts.tolist(), k=17)
+    te_emb = knn_center(te_emb, te_texts.tolist(), k=17)
     print(
-        f"clusters train={k_tr} mean_size={len(tr_texts) / k_tr:.1f}; "
-        f"test={k_te} mean_size={len(te_texts) / k_te:.1f}",
+        f"knn centering k=17: train={len(tr_texts)} test={len(te_texts)}",
         flush=True,
     )
 
