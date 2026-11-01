@@ -128,3 +128,13 @@ splits/           v2 — канонический, v1 — история (баг
   центрирование 0.4375 (issues #12, #14).
 - 2026-11-01: стек + centered emb — 0.4683. Собран кернел v3 (CPU),
   модель DeBERTa берётся из публичного датасета `eric0045/microsoft-deberta-v3-small-local`.
+
+## Ночной прогон 2026-11-01
+
+- Кернел: `morginalium/ntl-gold-apex-fork` (версия 1), форк публичного
+  `synthreaper/ntl-gold-apex-champion-0-670` (public LB 0.670).
+- Commit-прогон на 3 строках: зелёный за 6 мин, все входы разрешились.
+- Сабмит: ref **57881538**, `PENDING`, полный ре-ран ~8.3 ч.
+- Бюджет ATLAS зашит в код: `8.3 ч − comp_stack − 10 мин`, лимит Kaggle 9 ч.
+- Запасной вариант, если скор < 0.66: `zbigniewkirchner/0-664-one-swap`
+  (198k пул, svc_w 12, sinkhorn 0.45).
