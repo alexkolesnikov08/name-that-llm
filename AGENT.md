@@ -161,3 +161,6 @@ Balanced accuracy по 18 классам: среднее per-class recall. Кл�
 - 2026-11-01: честный пересчёт на v2: baseline **0.2818 ± 0.0052**,
   HPO-best **0.2880 ± 0.0056**, Δ +0.0062 — шум. Issue #2 закрыт как refuted.
   Ставка переходит на H-008 (энкодер): frozen DeBERTa-small + linear probe.
+- 2026-11-01: frozen probe DeBERTa-small: **0.3413 ± 0.0051** (CI 0.323–0.360),
+  на +0.053 выше TF-IDF. Сигнал в энкодере есть. Запущен fine-tune
+  (3 эпохи, lr 2e-5, max_len 256), smoke на fold 0.
