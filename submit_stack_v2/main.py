@@ -29,8 +29,8 @@ DATA_CANDIDATES = [
     "/kaggle/input/name-that-llm",
 ]
 MODEL_CANDIDATES = [
-    "/kaggle/input/deberta-v3-small-ntl",
-    "/kaggle/input/microsoft-deberta-v3-small-local/microsoft-deberta-v3-small",
+    "/kaggle/input/datasets/eric0045/microsoft-deberta-v3-small-local/microsoft-deberta-v3-small",
+    "/kaggle/input/datasets/morginalium/deberta-v3-small-ntl",
     os.environ.get("NTL_MODEL_DIR", ""),
     "microsoft/deberta-v3-small",
 ]
