@@ -1,0 +1,13 @@
+# Данные и артефакты — не публиковать
+*.csv
+*.parquet
+*.zip
+scratch/
+runs/
+data/
+artifacts/
+models/
+*.pkl
+*.joblib
+*.cbm
+*.db
