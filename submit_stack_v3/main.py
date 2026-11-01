@@ -224,6 +224,7 @@ def main() -> None:
     print(f"train={len(tr_texts)} test={len(te_texts)} emb_device={pick_device()}", flush=True)
 
     device = pick_device()
+    print("model candidates:", [(x, os.path.isdir(x)) for x in MODEL_CANDIDATES], flush=True)
     tokenizer = AutoTokenizer.from_pretrained(model_dir())
     encoder = AutoModel.from_pretrained(model_dir()).to(device).eval()
     tr_emb = embed(tr_texts.tolist(), tokenizer, encoder, device)

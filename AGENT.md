@@ -58,8 +58,8 @@ LB baseline: 0.299 (совпадает с CV).
 
 ## Текущий фокус
 
-1. Сабмит v2: стек + эмбеддинги, центрированные по TF-IDF-кластерам.
-   Локально 0.4683. Кернел `submit_stack_v2` (CPU).
+1. Сабмит: стек + эмбеддинги, центрированные по TF-IDF-кластерам.
+   Локально 0.4683. Кернел `submit_stack_v3` (CPU).
 2. H-013: мягкое назначение внутри кластеров.
 3. H-010/H-011: коррекция приоров.
 4. H-021: другие энкодеры (bge, e5, ModernBERT, Qwen hidden states).
@@ -71,8 +71,8 @@ src/ntl/          библиотека (data, metrics, cv, evaluate, features, m
 src/              пайплайн: make_split, embeddings, hpo_tfidf, confirm, stack, finetune
 experiments/      диагностика: views, stack_ablation, emb_variants, prompt_centering,
                   topic_clusters, plot_study, reeval, eval_embeddings
-submit/           Kaggle-кернел baseline
-submit_stack/     Kaggle-кернел стека
+submit/           Kaggle-кернел baseline (LB 0.299)
+submit_stack_v3/  Kaggle-кернел стека + кластерное центрирование (актуальный)
 splits/           v2 — канонический, v1 — история (баг с одинаковыми повторами)
 ```
 
@@ -84,6 +84,7 @@ splits/           v2 — канонический, v1 — история (баг
 - Kaggle: инференс без интернета, ≤9 ч, веса только из публичных датасетов.
 - Kaggle datasets монтируются в `/kaggle/input/datasets/<owner>/<slug>`.
   DeBERTa берём из публичного `eric0045/microsoft-deberta-v3-small-local`.
+- Если CLI теряет авторизацию: `export KAGGLE_API_TOKEN=$(kaggle auth print-access-token)`.
 
 ## Журнал
 
@@ -93,5 +94,5 @@ splits/           v2 — канонический, v1 — история (баг
 - 2026-11-01: frozen DeBERTa 0.342; стек 0.392 (issue #4).
 - 2026-11-01: prompt-centering 0.4385; TF-IDF-кластеры purity 0.976,
   центрирование 0.4375 (issues #12, #14).
-- 2026-11-01: стек + centered emb — 0.4683. Собран кернел v2 (CPU),
-  модель DeBERTa залита приватным датасетом `morginalium/deberta-v3-small-ntl`.
+- 2026-11-01: стек + centered emb — 0.4683. Собран кернел v3 (CPU),
+  модель DeBERTa берётся из публичного датасета `eric0045/microsoft-deberta-v3-small-local`.

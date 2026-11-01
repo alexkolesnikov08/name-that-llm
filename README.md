@@ -13,7 +13,7 @@ Kaggle: по пассажу определить, какая из 18 LLM его 
 - `src/ntl/` — библиотека: данные, метрика, CV, фичи, модели.
 - `src/` — пайплайн: сплит, эмбеддинги, HPO, стек.
 - `experiments/` — диагностические скрипты.
-- `submit/`, `submit_stack/` — Kaggle-кернелы.
+- `submit/`, `submit_stack_v3/` — Kaggle-кернелы.
 - `splits/` — фиксированные разбиения.
 - `AGENT.md` — контекст и текущее состояние.
 - [Issues](https://github.com/alexkolesnikov08/name-that-llm/issues) — гипотезы и результаты.
