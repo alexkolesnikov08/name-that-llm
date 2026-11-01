@@ -44,6 +44,13 @@ def main() -> None:
     subsets = [("all", full), ("without emb", [n for n in full if n != "emb"])]
     for n in full:
         subsets.append((f"all - {n}", [x for x in full if x != n]))
+    subsets += [
+        ("emb+stylo+char", ["emb", "stylo", "char"]),
+        ("emb+stylo+char+word", ["emb", "stylo", "char", "word"]),
+        ("emb+stylo", ["emb", "stylo"]),
+        ("emb+char", ["emb", "char"]),
+        ("emb+stylo+char+skel", ["emb", "stylo", "char", "skeleton"]),
+    ]
     for name, subset in subsets:
         mean, std = stack_score(subset, y, groups, split, probs)
         print(f"{name:28s} {mean:.4f} {std:.4f}")
