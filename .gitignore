@@ -15,3 +15,18 @@ kaggle_model/
 
 # сторонние публичные ноутбуки (рекона, не наше)
 research/
+
+# Python-кэш и мусор
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+*.egg-info/
+.DS_Store
+
+# собранный датасет (публикуется отдельно на Kaggle)
+dataset/build/
+
+# сплиты версионируются: JSON-манифесты и pool-разметка
+!splits/*.parquet

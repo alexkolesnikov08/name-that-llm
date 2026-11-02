@@ -1,5 +1,10 @@
 # Форк публичного Gold Apex
 
+> **Архив.** Ноутбук удалён из ветки `main`, чтобы не выдавать чужой пайплайн
+> за наше решение. Он целиком сохранён в теге `gold-apex-fork`:
+> `git show gold-apex-fork:submit_gold_apex/name-that-llm-gold-apex-fork.ipynb`.
+> В `main` остаются только скрипты запуска и метаданные кернела.
+
 Это не наше решение. Ноутбук — публичный `synthreaper/ntl-gold-apex-champion-0-670`
 (0.670 public LB), который сам собран из публичных ноутбуков
 omerfarukmerey, mercurydust, Dhruv Tibarewal, Roman Tamrazov, prvsiyan,
@@ -58,3 +63,17 @@ kaggle competitions submit -c name-that-llm \
 ```
 
 GPU-квота: 30 ч/нед, один прогон ≈ 8.3 ч.
+
+## Результат нашего прогона
+
+Публичный пайплайн заявляет **0.670** public LB. Наш форк без изменений
+алгоритма дал **0.662** LB — **rank 432 из 4231**. Это воспроизведение
+чужого baseline, а не наша модель; в зачёт портфолио он идёт только как
+точка отсчёта.
+
+Чтобы повторить запуск из `main`, сначала достаньте ноутбук из тега:
+
+```bash
+git show gold-apex-fork:submit_gold_apex/name-that-llm-gold-apex-fork.ipynb \
+  > kaggle/gold_apex/name-that-llm-gold-apex-fork.ipynb
+```

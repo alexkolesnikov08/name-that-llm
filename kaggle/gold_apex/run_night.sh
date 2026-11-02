@@ -2,11 +2,11 @@
 # Ночной прогон форка: push -> commit -> submit в соревнование.
 # Запускать только по команде пользователя.
 set -euo pipefail
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 
 KERNEL="morginalium/ntl-gold-apex-fork"
 COMP="name-that-llm"
-DIR="submit_gold_apex"
+DIR="kaggle/gold_apex"
 
 # если передан номер версии — не пушим заново, а сразу отправляем её
 if [ $# -ge 1 ]; then

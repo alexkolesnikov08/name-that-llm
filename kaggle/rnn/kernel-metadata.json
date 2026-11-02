@@ -12,7 +12,7 @@
     "gpu"
   ],
   "dataset_sources": [
-    "crtproduction/name-that-llm-open-pool"
+    "morginalium/name-that-llm-clean-pool-v1"
   ],
   "kernel_sources": [],
   "competition_sources": [
