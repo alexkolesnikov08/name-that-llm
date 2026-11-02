@@ -51,7 +51,7 @@ PY
 
 ### Пул
 
-Kaggle dataset `morginalium/name-that-llm-clean-pool-v1` (**публикуется**,
+Kaggle dataset `morginalium/name-that-llm-clean-pool-v1` (**опубликован**,
 CC BY-SA 4.0). Скачайте и положите `pool_v1.parquet` в `splits/` либо
 передайте путь вручную.
 

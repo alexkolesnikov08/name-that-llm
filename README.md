@@ -82,9 +82,10 @@ of model generations, reusable metrics, and Kaggle kernel sources.
 Публичный пул генераций:
 
 - Kaggle dataset: [morginalium/name-that-llm-clean-pool-v1](https://www.kaggle.com/datasets/morginalium/name-that-llm-clean-pool-v1)
-  — **публикуется**. Лицензия данных **CC BY-SA 4.0**.
-- **190 588** исходных строк, из них **115 342** чистых и **23 451**
-  канонических промптов после кросс-источниковой дедупликации.
+  — **опубликован** (версия 4). Лицензия данных **CC BY-SA 4.0**.
+- **190 588** исходных строк; **115 342** проходят консервативный фильтр
+  `keep_clean`, из них **114 670** с непустым `prompt_canon` (foldable),
+  **23 451** канонический промпт.
 - 18 моделей, разметка `model`, две разные группировки: `prompt_group`
   (группа внутри источника) и `prompt_canon` (канонический промпт после
   слияния источников). Это не взаимозаменяемые ключи.
@@ -228,7 +229,7 @@ Gold Apex: `docs/reproduction.md`. Данные и веса моделей не 
 
 ## Ссылки
 
-- Kaggle dataset (публикуется): <https://www.kaggle.com/datasets/morginalium/name-that-llm-clean-pool-v1>
+- Kaggle dataset: <https://www.kaggle.com/datasets/morginalium/name-that-llm-clean-pool-v1>
 - Kaggle kernels (исторические, могли остаться приватными):
   [baseline](https://www.kaggle.com/code/morginalium/name-that-llm-baseline),
   [stack-v3](https://www.kaggle.com/code/morginalium/name-that-llm-stack-v3),
