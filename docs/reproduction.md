@@ -71,7 +71,15 @@ PYTHONPATH=src python src/make_split.py
 
 `official_v1.json` — артефакт этапа data/split; его состав фиксируется
 отдельно и не должен пересобираться при каждом запуске (иначе sealed
-перестаёт быть sealed).
+перестаёт быть sealed). Полная сборка и проверка:
+
+```bash
+python scripts/build_dataset.py      # из research/pool + train.csv
+python scripts/validate_dataset.py   # схема, фолды, хэши; код 1 при ошибке
+python scripts/upload_dataset.py --public
+```
+
+Скрипты требуют локальные `research/` и `train.csv` (в git их нет).
 
 ## 3. Тесты
 

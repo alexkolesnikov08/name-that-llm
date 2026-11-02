@@ -122,8 +122,23 @@ BA(2/prompt) на официальном holdout. Пул годится для �
 |---|---|---|
 | `splits/official_v1.json` | 150 промптов, 5 блоков по 30; блоки 0–3 dev, блок 4 sealed | каноническая валидация |
 | `splits/pool_v1.parquet` | одна строка на `prompt_canon`: `fold`, `n_rows`, `n_clean`, `n_models`, `n_sources`, `source_top` | 5 фолдов пула по `prompt_canon` |
+| `splits/labels.json` | 18 классов, 6 семейств, порядок индексов | канонический порядок меток |
 | `splits/v2.json` | 30 locked holdout + 120 dev, 5 повторов (сиды 42–46) | исторические прогоны |
 | `splits/v1.json` | старый holdout/dev | только история; в v1 были одинаковые псевдо-повторы |
+
+Сборка и проверка датасета:
+
+```bash
+python scripts/build_dataset.py        # dataset/build/ + splits/
+python scripts/validate_dataset.py     # проверки схемы, фолдов, хэшей
+python scripts/upload_dataset.py --public
+```
+
+`build_dataset.py` детерминирован: при тех же входах получаются те же
+`official_v1.json` и `pool_v1.parquet` (кроме timestamp в checks.json).
+`validate_dataset.py` возвращает код 1 при ошибке, поэтому его можно
+ставить в CI. `upload_dataset.py` публикует версию на Kaggle и проверяет
+её после загрузки.
 
 Правила:
 
