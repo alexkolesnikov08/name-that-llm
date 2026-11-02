@@ -28,12 +28,16 @@
 | 10 | Centered emb, kNN по TF-IDF (k=17) | dev v2, BA(18) | 0.4415 ± 0.0041 | — | лучший одиночный |
 | 11 | Стек + kNN-centered emb | dev v2, BA(18) | **0.4712 ± 0.0026** | 0.356 | локальный максимум |
 | 12 | Стек + kNN-centered emb | holdout 30, BA(18) | 0.4833 | 0.356 | holdout не спас |
-| 13 | Char-BiGRU v1 | official holdout, BA(2) | **0.361** | — | лучший RNN |
-| 14 | Char-BiGRU v2 + family/adversary | official holdout, BA(2) | **0.341** | — | регресс |
-| 15 | Char-SVC на пуле | official holdout, BA(2) | **0.347** | — | перенос ограничен |
+| 13 | Char-BiGRU v1 | holdout 30, BA(2) | **0.361** | — | лучший RNN |
+| 14 | Char-BiGRU v2 + family/adversary | holdout 30, BA(2) | **0.341** | — | регресс |
+| 15 | Char-SVC на пуле | holdout 30, BA(2) | **0.347** | — | перенос ограничен |
 | 16 | Пул → official, серия моделей | BA(2) | 0.36–0.40 | — | потолок переноса |
 | 17 | Публичный Gold Apex (чужой) | LB | — | 0.670 | источник форка |
 | 18 | Наш форк Gold Apex (чужой пайплайн) | LB | — | **0.662**, rank 432/4231 | baseline, не наша модель |
+
+«Holdout 30» в строках 13–15 — это первые 30 промптов, выбранных
+скриптом RNN/SVC, а не sealed-блок `official_v1.json`. Это исторический
+протокол; новые эксперименты должны идти на `official_v1.json`.
 
 ## 2. Что подтвердилось
 
